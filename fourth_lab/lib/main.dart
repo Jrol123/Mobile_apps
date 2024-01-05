@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:fourth_lab/db/db.dart';
 import 'package:fourth_lab/utils/dialog_box.dart';
 import 'package:fourth_lab/utils/todo_tile.dart';
