@@ -1,5 +1,6 @@
 {
-         "search": "Поиск",
-         "city": "Город",
-         "language": "ru"
+  "search": "Поиск",
+  "city": "Город",
+  "appname": "Погодник",
+  "language": "ru"
 }

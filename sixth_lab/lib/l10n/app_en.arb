@@ -1,5 +1,6 @@
 {
-         "search": "Search",
-         "city": "City",
-         "language": "en"
+  "search": "Search",
+  "city": "City",
+  "appname": "Weatherman",
+  "language": "en"
 }
