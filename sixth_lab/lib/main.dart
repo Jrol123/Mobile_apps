@@ -23,6 +23,14 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
             title: 'sixth_lab',
+            supportedLocales: AllLocales.all,
+            locale: Provider.of<LocaleProvider>(context).locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
@@ -31,10 +39,13 @@ class MyApp extends StatelessWidget {
               colorScheme: const ColorScheme.dark(),
               useMaterial3: true,
             ),
+            // AppLocalizations.of(context)!.appname.toString()
+            // TODO: Разобраться, почему не получается вставить верхнюю строку тут
             home: const MyHomePage(
               title: Text('Погодник',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                     fontSize: 30,
                   )),
             ));
@@ -67,54 +78,100 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Align(
-          alignment: Alignment.center,
-          child: widget.title,
-        ),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+    return MaterialApp(
+        home: Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            appBar: AppBar(
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              title: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  AppLocalizations.of(context)!.appname,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 30,
+                  ),
+                ),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+            body: Stack(
+              children: [
+                Stack(
+                  children: <Widget>[
+                    Align(
+                      alignment: const Alignment(-0.9, 0.9),
+                      child: FloatingActionButton(
+                        child: const Text("EN"),
+                        onPressed: () => {
+                          Provider.of<LocaleProvider>(context, listen: false)
+                              .setLocale(AllLocales.all[0])
+                        },
+                      ),
+                    ),
+                    Align(
+                      alignment: const Alignment(0.9, 0.9),
+                      child: FloatingActionButton(
+                        child: const Text("RU"),
+                        onPressed: () => {
+                          Provider.of<LocaleProvider>(context, listen: false)
+                              .setLocale(AllLocales.all[1])
+                        },
+                      ),
+                    ),
+                  ],
+                ), // Localisation
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (_response != null)
+                        Column(
+                          children: [
+                            Text(
+                              cityTextController.text,
+                              style: const TextStyle(
+                                  fontSize: 30, color: Colors.white),
+                            ),
+                            Text(
+                              '${_response!.tempInfo.temperature}°',
+                              style: const TextStyle(
+                                  fontSize: 40, color: Colors.white),
+                            ),
+                            Text(
+                              _response!.weatherInfo.description,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                            Image.network(_response!.iconUrl),
+                          ],
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 50),
+                        child: SizedBox(
+                          width: 150,
+                          child: TextField(
+                              controller: cityTextController,
+                              decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)!
+                                      .city
+                                      .toString(),
+                                  labelStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary)),
+                              textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: search,
+                        child: Text(
+                            AppLocalizations.of(context)!.search.toString()),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            )));
   }
 }
